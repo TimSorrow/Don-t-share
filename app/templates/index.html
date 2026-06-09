@@ -108,7 +108,7 @@
             </div>
 
             <!-- Canvas View Area -->
-            <div class="flex-1 p-4 flex flex-col overflow-y-auto min-h-0 relative bg-zinc-50 dark:bg-zinc-950/20">
+            <div class="flex-1 p-4 flex flex-col overflow-hidden min-h-0 relative bg-zinc-50 dark:bg-zinc-950/20">
                 
                 <!-- 1. Drag & Drop Loader -->
                 <div id="uploadZone" class="flex-1 border-2 border-dashed border-zinc-300 dark:border-zinc-800 hover:border-indigo-500 dark:hover:border-indigo-500/50 rounded-lg flex flex-col items-center justify-center p-6 bg-white dark:bg-zinc-900/10 hover:bg-indigo-50/10 dark:hover:bg-indigo-950/[0.01] transition duration-200 group cursor-pointer select-none">
@@ -128,7 +128,7 @@
                 </div>
 
                 <!-- 3. PDF Image Viewer -->
-                <div id="pdfPreviewContainer" class="hidden flex-1 flex items-center justify-center overflow-auto min-h-0 bg-zinc-100/60 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2 relative">
+                <div id="pdfPreviewContainer" class="hidden flex-1 flex flex-col items-center overflow-auto min-h-0 bg-zinc-100/60 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 relative">
                     <div id="pdfPageWrapper" class="relative max-w-full shadow mx-auto bg-white rounded border border-zinc-200 dark:border-zinc-800">
                         <img id="pdfPageImage" class="block max-w-full h-auto" src="" alt="PDF Page">
                         <div id="pdfOverlay" class="absolute inset-0 z-10 overflow-hidden cursor-crosshair"></div>
