@@ -1,0 +1,145 @@
+/* Custom scrollbars for slate UI */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(79, 70, 229, 0.15);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(79, 70, 229, 0.35);
+    }
+}
+
+.active-loader {
+    animation: pulseGlow 2s infinite;
+}
+
+/* Custom fonts styling */
+body {
+    font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+/* Text editor highlights */
+.pii-highlight {
+    display: inline-block;
+    padding: 0.1em 0.3em;
+    margin: 0 0.1em;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+    user-select: none;
+}
+
+/* Color palettes per entity type */
+.pii-person {
+    background-color: rgba(249, 115, 22, 0.15); /* orange */
+    color: #fdba74;
+    border-color: #f97316;
+}
+.pii-person:hover {
+    background-color: rgba(249, 115, 22, 0.3);
+}
+
+.pii-phone {
+    background-color: rgba(236, 72, 153, 0.15); /* pink */
+    color: #fbcfe8;
+    border-color: #ec4899;
+}
+.pii-phone:hover {
+    background-color: rgba(236, 72, 153, 0.3);
+}
+
+.pii-email {
+    background-color: rgba(59, 130, 246, 0.15); /* blue */
+    color: #bfdbfe;
+    border-color: #3b82f6;
+}
+.pii-email:hover {
+    background-color: rgba(59, 130, 246, 0.3);
+}
+
+.pii-location {
+    background-color: rgba(168, 85, 247, 0.15); /* purple */
+    color: #e9d5ff;
+    border-color: #a855f7;
+}
+.pii-location:hover {
+    background-color: rgba(168, 85, 247, 0.3);
+}
+
+.pii-generic {
+    background-color: rgba(79, 70, 229, 0.15); /* brand indigo */
+    color: #c7d2fe;
+    border-color: #4f46e5;
+}
+.pii-generic:hover {
+    background-color: rgba(79, 70, 229, 0.3);
+}
+
+/* Ignored (exempted) highlights */
+.pii-ignored {
+    background-color: rgba(71, 85, 105, 0.1) !important;
+    color: #94a3b8 !important;
+    border-color: #64748b !important;
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+/* PDF Bounding Box Overlays */
+.pdf-box {
+    position: absolute;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
+}
+
+/* PDF Box Status states */
+.pdf-box-redact {
+    background-color: rgba(239, 68, 68, 0.2); /* Red - to redact */
+    border-color: rgba(239, 68, 68, 0.7);
+}
+.pdf-box-redact:hover {
+    background-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.pdf-box-keep {
+    background-color: rgba(16, 185, 129, 0.1); /* Green - ignored, keep */
+    border-color: rgba(16, 185, 129, 0.5);
+    border-style: dashed;
+}
+.pdf-box-keep:hover {
+    background-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+/* SVG Selection box when drawing */
+.pdf-drawing-rect {
+    position: absolute;
+    border: 1px dashed #3b82f6;
+    background-color: rgba(59, 130, 246, 0.15);
+    pointer-events: none;
+}
+
+/* Glassmorphism utility */
+.backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
