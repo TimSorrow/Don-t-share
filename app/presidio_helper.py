@@ -12,7 +12,8 @@ import pytesseract
 from pdf2image import convert_from_bytes, convert_from_path
 
 # Presidio imports
-from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+import pymorphy3
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry, EntityRecognizer
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from presidio_anonymizer import AnonymizerEngine
@@ -124,6 +125,157 @@ nlp_configuration = {
     ],
 }
 
+class RussianNameRecognizer(EntityRecognizer):
+    def __init__(self):
+        super().__init__(
+            supported_entities=["PERSON"],
+            supported_language="ru",
+            name="RussianNameRecognizer"
+        )
+        self.morph = pymorphy3.MorphAnalyzer()
+        
+        # Common Russian names in transliteration and popular English names
+        self.COMMON_LATIN_NAMES = {
+            # Russian names in Latin
+            "ivan", "petr", "pyotr", "aleksandr", "alexander", "dmitry", "dmitriy", "alexey", "aleksey",
+            "sergey", "sergei", "andrey", "andrei", "vladimir", "mikhail", "nikolay", "nikolai", "yury",
+            "yuriy", "igor", "anton", "artem", "artyom", "roman", "denis", "oleg", "pavel", "ilya",
+            "kirill", "danil", "danila", "daniil", "maxim", "maksim", "evgeny", "evgeniy", "semyon",
+            "anna", "maria", "mariya", "elena", "olga", "natalia", "natalya", "tatiana", "tatyana",
+            "ekaterina", "katerina", "irina", "svetlana", "anastasia", "anastasiya", "julia", "yulia",
+            "marina", "daria", "dariya", "darya", "nadezhda", "vera", "lyubov", "ludmila", "lyudmila",
+            # Common Western names
+            "john", "smith", "michael", "david", "james", "william", "charles", "robert", "mary",
+            "patricia", "jennifer", "elizabeth", "linda", "barbara", "richard", "joseph", "thomas",
+            "paul", "mark", "donald", "george", "steven", "edward", "brian", "kevin", "ronald",
+            "timothy", "jason", "jeffrey", "gary", "ryan", "nicholas", "eric", "jacob", "jonathan",
+            "sarah", "karen", "nancy", "lisa", "betty", "sandra", "ashley", "dorothy", "kimberly"
+        }
+        
+        # Common transliterated Russian surname suffixes
+        self.LATIN_SURNAME_SUFFIXES = (
+            "ov", "ova", "ev", "eva", "in", "ina", "iy", "y", "aya", "ikh", "ykh",
+            "tskiy", "skiy", "sky", "skaia", "shvili", "dze", "yan", "ian"
+        )
+        
+    def analyze(self, text, entities, nlp_artifacts=None):
+        from presidio_analyzer import RecognizerResult
+        results = []
+        if "PERSON" not in entities:
+            return results
+            
+        if not nlp_artifacts or not nlp_artifacts.tokens:
+            return results
+            
+        tokens = nlp_artifacts.tokens
+        n_tokens = len(tokens)
+        
+        # Helper function to check if a word is a Russian or English initial (e.g., "И", "И.", "А.С.")
+        def is_token_initial(word):
+            if not word:
+                return False
+            if '.' not in word:
+                return len(word) == 1 and word.isupper() and word.isalpha()
+            else:
+                parts = word.split('.')
+                if parts[-1] == '':
+                    parts = parts[:-1]
+                return len(parts) > 0 and all(len(p) == 1 and p.isupper() and p.isalpha() for p in parts)
+
+        # 1. First pass: Tag each token
+        tagged = []
+        for i, t in enumerate(tokens):
+            word = t.text
+            is_cap = word and word[0].isupper() and word[0].isalpha()
+            
+            is_latin = False
+            if word:
+                try:
+                    word.encode('ascii')
+                    is_latin = True
+                except UnicodeEncodeError:
+                    is_latin = False
+            
+            is_initial = is_token_initial(word)
+            
+            is_name_part = False
+            is_latin_cap = False
+            
+            if is_cap and len(word) > 1 and not is_initial:
+                if is_latin:
+                    is_latin_cap = True
+                    w_lower = word.lower()
+                    if w_lower in self.COMMON_LATIN_NAMES:
+                        is_name_part = True
+                    elif w_lower.endswith(self.LATIN_SURNAME_SUFFIXES):
+                        is_name_part = True
+                else:
+                    parsed = self.morph.parse(word)
+                    is_name_part = any(
+                        'Name' in p.tag or 'Surn' in p.tag or 'Patr' in p.tag
+                        for p in parsed
+                    )
+            
+            tagged.append({
+                'index': i,
+                'token': t,
+                'text': word,
+                'is_name_part': is_name_part,
+                'is_initial': is_initial,
+                'is_latin_cap': is_latin_cap,
+                'start': t.idx,
+                'end': t.idx + len(word)
+            })
+            
+        # Adjacency rule for Latin capitalized words:
+        for i in range(n_tokens):
+            if tagged[i]['is_latin_cap'] and not tagged[i]['is_name_part']:
+                prev_is_latin_cap = (i > 0 and tagged[i-1]['is_latin_cap'])
+                next_is_latin_cap = (i + 1 < n_tokens and tagged[i+1]['is_latin_cap'])
+                if prev_is_latin_cap or next_is_latin_cap:
+                    tagged[i]['is_name_part'] = True
+            
+        # 2. Find and expand name ranges
+        used_tokens = [False] * n_tokens
+        
+        for i in range(n_tokens):
+            if tagged[i]['is_name_part'] and not used_tokens[i]:
+                L, R = i, i
+                expanded = True
+                while expanded:
+                    expanded = False
+                    # Expand right
+                    if R + 1 < n_tokens:
+                        if tagged[R+1]['is_name_part'] or tagged[R+1]['is_initial']:
+                            R += 1
+                            expanded = True
+                            continue
+                    # Expand left
+                    if L - 1 >= 0:
+                        if tagged[L-1]['is_name_part'] or tagged[L-1]['is_initial']:
+                            L -= 1
+                            expanded = True
+                            continue
+                            
+                for idx in range(L, R + 1):
+                    used_tokens[idx] = True
+                    
+                start_char = tagged[L]['start']
+                end_char = tagged[R]['end']
+                name_text = text[start_char:end_char]
+                
+                if len(name_text) >= 2:
+                    results.append(
+                        RecognizerResult(
+                            entity_type="PERSON",
+                            start=start_char,
+                            end=end_char,
+                            score=0.95
+                        )
+                    )
+                    
+        return results
+
 # Create NLP Engine and Recognizer Registry
 provider = NlpEngineProvider(nlp_configuration=nlp_configuration)
 nlp_engine = provider.create_engine()
@@ -140,6 +292,10 @@ ru_spacy_recognizer = SpacyRecognizer(
     supported_entities=["PERSON", "LOCATION", "ORGANIZATION"]
 )
 registry.add_recognizer(ru_spacy_recognizer)
+
+# Add custom Russian and Latin name recognizer
+ru_name_recognizer = RussianNameRecognizer()
+registry.add_recognizer(ru_name_recognizer)
 
 # Initialize engines
 analyzer = AnalyzerEngine(nlp_engine=nlp_engine, registry=registry, supported_languages=["en", "ru"])
