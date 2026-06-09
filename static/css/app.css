@@ -1,4 +1,4 @@
-/* Custom scrollbars for slate UI */
+/* Custom scrollbars for clean flat UI */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -6,99 +6,126 @@
 ::-webkit-scrollbar-track {
     background: transparent;
 }
+.dark ::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+}
 ::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 9999px;
+    background: #e4e4e7;
+    border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #475569;
+    background: #d4d4d8;
 }
 
-/* Animations */
-@keyframes pulseGlow {
-    0%, 100% {
-        box-shadow: 0 0 15px rgba(79, 70, 229, 0.15);
-    }
-    50% {
-        box-shadow: 0 0 25px rgba(79, 70, 229, 0.35);
-    }
-}
-
-.active-loader {
-    animation: pulseGlow 2s infinite;
-}
-
-/* Custom fonts styling */
+/* Base resets & layouts */
 body {
-    font-family: 'Outfit', 'Inter', sans-serif;
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Text editor highlights */
+/* Flat minimalist designs - no gradients or glows */
+.border-flat {
+    border-color: #e4e4e7;
+}
+.dark .border-flat {
+    border-color: #27272a;
+}
+
+/* Text editor highlights with flat borders */
 .pii-highlight {
     display: inline-block;
-    padding: 0.1em 0.3em;
-    margin: 0 0.1em;
-    border-radius: 0.25rem;
+    padding: 0 0.2em;
+    margin: 0 0.05em;
+    border-radius: 2px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-    border-bottom: 2px solid transparent;
+    transition: background-color 0.1s ease;
+    border-bottom: 2px solid;
     user-select: none;
 }
 
-/* Color palettes per entity type */
+/* Color palettes per entity type - Flat and minimal */
 .pii-person {
-    background-color: rgba(249, 115, 22, 0.15); /* orange */
-    color: #fdba74;
+    background-color: rgba(249, 115, 22, 0.1); /* orange */
+    color: #ea580c;
     border-color: #f97316;
 }
+.dark .pii-person {
+    color: #ffedd5;
+    background-color: rgba(249, 115, 22, 0.15);
+}
 .pii-person:hover {
-    background-color: rgba(249, 115, 22, 0.3);
+    background-color: rgba(249, 115, 22, 0.25);
 }
 
 .pii-phone {
-    background-color: rgba(236, 72, 153, 0.15); /* pink */
-    color: #fbcfe8;
+    background-color: rgba(236, 72, 153, 0.1); /* pink */
+    color: #db2777;
     border-color: #ec4899;
 }
+.dark .pii-phone {
+    color: #fce7f3;
+    background-color: rgba(236, 72, 153, 0.15);
+}
 .pii-phone:hover {
-    background-color: rgba(236, 72, 153, 0.3);
+    background-color: rgba(236, 72, 153, 0.25);
 }
 
 .pii-email {
-    background-color: rgba(59, 130, 246, 0.15); /* blue */
-    color: #bfdbfe;
+    background-color: rgba(59, 130, 246, 0.1); /* blue */
+    color: #2563eb;
     border-color: #3b82f6;
 }
+.dark .pii-email {
+    color: #dbeafe;
+    background-color: rgba(59, 130, 246, 0.15);
+}
 .pii-email:hover {
-    background-color: rgba(59, 130, 246, 0.3);
+    background-color: rgba(59, 130, 246, 0.25);
 }
 
 .pii-location {
-    background-color: rgba(168, 85, 247, 0.15); /* purple */
-    color: #e9d5ff;
+    background-color: rgba(168, 85, 247, 0.1); /* purple */
+    color: #9333ea;
     border-color: #a855f7;
 }
+.dark .pii-location {
+    color: #f3e8ff;
+    background-color: rgba(168, 85, 247, 0.15);
+}
 .pii-location:hover {
-    background-color: rgba(168, 85, 247, 0.3);
+    background-color: rgba(168, 85, 247, 0.25);
 }
 
 .pii-generic {
-    background-color: rgba(79, 70, 229, 0.15); /* brand indigo */
-    color: #c7d2fe;
-    border-color: #4f46e5;
+    background-color: rgba(107, 114, 128, 0.1); /* gray */
+    color: #4b5563;
+    border-color: #6b7280;
+}
+.dark .pii-generic {
+    color: #f3f4f6;
+    background-color: rgba(156, 163, 175, 0.15);
+    border-color: #9ca3af;
 }
 .pii-generic:hover {
-    background-color: rgba(79, 70, 229, 0.3);
+    background-color: rgba(107, 114, 128, 0.2);
 }
 
 /* Ignored (exempted) highlights */
 .pii-ignored {
-    background-color: rgba(71, 85, 105, 0.1) !important;
-    color: #94a3b8 !important;
-    border-color: #64748b !important;
+    background-color: rgba(156, 163, 175, 0.05) !important;
+    color: #9ca3af !important;
+    border-color: #d1d5db !important;
     text-decoration: line-through;
-    opacity: 0.6;
+    opacity: 0.5;
+}
+.dark .pii-ignored {
+    color: #71717a !important;
+    border-color: #52525b !important;
 }
 
 /* PDF Bounding Box Overlays */
@@ -106,40 +133,32 @@ body {
     position: absolute;
     border: 1px solid;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.1s ease;
     box-sizing: border-box;
 }
 
 /* PDF Box Status states */
 .pdf-box-redact {
-    background-color: rgba(239, 68, 68, 0.2); /* Red - to redact */
-    border-color: rgba(239, 68, 68, 0.7);
+    background-color: rgba(239, 68, 68, 0.15); /* Red - to redact */
+    border-color: rgba(239, 68, 68, 0.6);
 }
 .pdf-box-redact:hover {
-    background-color: rgba(239, 68, 68, 0.4);
-    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+    background-color: rgba(239, 68, 68, 0.3);
 }
 
 .pdf-box-keep {
-    background-color: rgba(16, 185, 129, 0.1); /* Green - ignored, keep */
-    border-color: rgba(16, 185, 129, 0.5);
+    background-color: rgba(16, 185, 129, 0.08); /* Green - ignored, keep */
+    border-color: rgba(16, 185, 129, 0.4);
     border-style: dashed;
 }
 .pdf-box-keep:hover {
-    background-color: rgba(16, 185, 129, 0.3);
-    box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+    background-color: rgba(16, 185, 129, 0.25);
 }
 
 /* SVG Selection box when drawing */
 .pdf-drawing-rect {
     position: absolute;
     border: 1px dashed #3b82f6;
-    background-color: rgba(59, 130, 246, 0.15);
+    background-color: rgba(59, 130, 246, 0.1);
     pointer-events: none;
-}
-
-/* Glassmorphism utility */
-.backdrop-blur-sm {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
 }

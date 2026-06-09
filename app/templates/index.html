@@ -11,17 +11,8 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        brand: {
-                            50: '#f5f7ff',
-                            100: '#ebf0ff',
-                            500: '#4f46e5',
-                            600: '#4338ca',
-                            700: '#3730a3',
-                        }
-                    },
                     fontFamily: {
-                        sans: ['Outfit', 'Inter', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }
@@ -30,194 +21,181 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/app.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased overflow-x-hidden selection:bg-brand-500 selection:text-white">
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen flex flex-col antialiased overflow-hidden selection:bg-indigo-500 selection:text-white">
 
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
-        <div class="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-violet-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
-                    <i class="fa-solid fa-shield-halved text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent tracking-tight">Don't Share</h1>
-                    <p class="text-[10px] text-slate-400 font-medium">Очистка файлов от персональных данных</p>
-                </div>
+    <!-- Thin Flat Header Toolbar -->
+    <header class="h-12 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 select-none">
+        <div class="h-full px-4 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-shield-halved text-indigo-600 dark:text-indigo-400 text-sm"></i>
+                <h1 class="text-sm font-bold tracking-tight">Don't Share</h1>
+                <span class="text-[9px] text-zinc-500 font-medium">PII Cleaner</span>
             </div>
 
-            <!-- Dependencies Status Panel -->
-            <div class="flex items-center space-x-6">
+            <!-- Header Controls -->
+            <div class="flex items-center space-x-4">
+                <!-- Status indicators -->
+                <div class="hidden sm:flex items-center space-x-3 text-[10px] font-medium">
+                    <div id="statusTesseract" class="flex items-center space-x-1.5 bg-zinc-100 dark:bg-zinc-850 px-2 py-1 border border-zinc-200 dark:border-zinc-800 rounded">
+                        <span class="relative flex h-1.5 w-1.5">
+                            <span id="dotTesseract" class="relative inline-flex rounded-full h-1.5 w-1.5 bg-zinc-500"></span>
+                        </span>
+                        <span class="text-zinc-500">Tes:</span>
+                        <span id="textTesseract" class="text-zinc-700 dark:text-zinc-300">Проверка...</span>
+                    </div>
+
+                    <div id="statusPoppler" class="flex items-center space-x-1.5 bg-zinc-100 dark:bg-zinc-850 px-2 py-1 border border-zinc-200 dark:border-zinc-800 rounded">
+                        <span class="relative flex h-1.5 w-1.5">
+                            <span id="dotPoppler" class="relative inline-flex rounded-full h-1.5 w-1.5 bg-zinc-500"></span>
+                        </span>
+                        <span class="text-zinc-500">Pop:</span>
+                        <span id="textPoppler" class="text-zinc-700 dark:text-zinc-300">Проверка...</span>
+                    </div>
+                </div>
+
                 <!-- Lang Selector -->
-                <div class="flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5">
-                    <i class="fa-solid fa-globe text-slate-400 text-xs"></i>
-                    <select id="langSelect" class="bg-transparent text-xs text-slate-200 focus:outline-none cursor-pointer font-medium">
-                        <option value="ru" class="bg-slate-900" selected>Русский (ru)</option>
-                        <option value="en" class="bg-slate-900">English (en)</option>
+                <div class="flex items-center space-x-1 bg-zinc-100 dark:bg-zinc-850 border border-zinc-200 dark:border-zinc-800 rounded px-2 py-0.5">
+                    <i class="fa-solid fa-globe text-zinc-500 text-[10px]"></i>
+                    <select id="langSelect" class="bg-transparent text-[10px] text-zinc-700 dark:text-zinc-300 focus:outline-none cursor-pointer font-medium">
+                        <option value="ru" class="bg-white dark:bg-zinc-900" selected>RU</option>
+                        <option value="en" class="bg-white dark:bg-zinc-900">EN</option>
                     </select>
                 </div>
 
-                <!-- Status indicators -->
-                <div class="hidden sm:flex items-center space-x-4 text-xs font-medium">
-                    <div id="statusTesseract" class="flex items-center space-x-2 bg-slate-900/50 border border-slate-800 rounded-lg px-3 py-1.5">
-                        <span class="relative flex h-2 w-2">
-                            <span id="dotTesseractPing" class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-slate-500"></span>
-                            <span id="dotTesseract" class="relative inline-flex rounded-full h-2 w-2 bg-slate-500"></span>
-                        </span>
-                        <span class="text-slate-400">Tesseract:</span>
-                        <span id="textTesseract" class="text-slate-200">Проверка...</span>
-                    </div>
+                <!-- Theme Toggle Button -->
+                <button id="btnThemeToggle" class="p-1.5 text-zinc-500 hover:text-zinc-800 dark:hover:text-white bg-zinc-100 dark:bg-zinc-850 border border-zinc-200 dark:border-zinc-800 rounded transition" title="Сменить тему">
+                    <i id="themeIcon" class="fa-solid fa-sun text-[11px]"></i>
+                </button>
 
-                    <div id="statusPoppler" class="flex items-center space-x-2 bg-slate-900/50 border border-slate-800 rounded-lg px-3 py-1.5">
-                        <span class="relative flex h-2 w-2">
-                            <span id="dotPopplerPing" class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-slate-500"></span>
-                            <span id="dotPoppler" class="relative inline-flex rounded-full h-2 w-2 bg-slate-500"></span>
-                        </span>
-                        <span class="text-slate-400">Poppler:</span>
-                        <span id="textPoppler" class="text-slate-200">Проверка...</span>
-                    </div>
-                </div>
-
-                <!-- Settings cog -->
-                <button id="btnSettings" class="p-2 text-slate-400 hover:text-white bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-lg transition-all duration-200" title="Настройки путей">
-                    <i class="fa-solid fa-cog text-sm"></i>
+                <!-- Settings Button -->
+                <button id="btnSettings" class="p-1.5 text-zinc-500 hover:text-zinc-800 dark:hover:text-white bg-zinc-100 dark:bg-zinc-850 border border-zinc-200 dark:border-zinc-800 rounded transition" title="Настройки">
+                    <i class="fa-solid fa-cog text-[11px]"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Workspace Container -->
-    <main class="flex-1 max-w-[1600px] w-full mx-auto p-6 flex flex-col lg:flex-row gap-6 overflow-hidden">
+    <!-- Main Workspace -->
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
         
-        <!-- Left Side: Preview Panel (Text Highlight Editor / PDF Canvas Viewer) -->
-        <section class="flex-1 flex flex-col bg-slate-900/50 border border-slate-800/80 rounded-2xl overflow-hidden backdrop-blur-sm relative min-h-[500px]">
-            <!-- Header bar for preview -->
-            <div class="h-14 border-b border-slate-800/80 px-6 flex items-center justify-between bg-slate-900/40">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-file-invoice text-brand-500 text-sm"></i>
-                    <span id="previewTitle" class="text-sm font-semibold text-slate-200">Область просмотра</span>
-                    <span id="fileTypeBadge" class="hidden text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20"></span>
+        <!-- Left Side: Preview Panel -->
+        <section class="flex-1 flex flex-col bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 overflow-hidden relative">
+            <!-- Toolbar -->
+            <div class="h-10 border-b border-zinc-200 dark:border-zinc-800 px-4 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/40 select-none">
+                <div class="flex items-center space-x-1.5">
+                    <span id="previewTitle" class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Файл не выбран</span>
+                    <span id="fileTypeBadge" class="hidden text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/40"></span>
                 </div>
                 
-                <!-- PDF Navigation Controls (Hidden by default) -->
-                <div id="pdfControls" class="hidden flex items-center space-x-3">
-                    <button id="btnPrevPage" class="p-1 px-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs transition duration-200 disabled:opacity-50 disabled:pointer-events-none">
-                        <i class="fa-solid fa-chevron-left mr-1"></i> Назад
+                <!-- PDF Controls -->
+                <div id="pdfControls" class="hidden flex items-center space-x-2">
+                    <button id="btnPrevPage" class="p-1 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 rounded text-[10px] transition disabled:opacity-40 disabled:pointer-events-none">
+                        <i class="fa-solid fa-chevron-left"></i>
                     </button>
-                    <span class="text-xs text-slate-400 font-medium">
-                        Стр. <span id="spanCurrentPage" class="text-slate-200 font-semibold">1</span> из <span id="spanTotalPages" class="text-slate-200 font-semibold">1</span>
+                    <span class="text-[10px] text-zinc-500 font-medium">
+                        <span id="spanCurrentPage">1</span> / <span id="spanTotalPages">1</span>
                     </span>
-                    <button id="btnNextPage" class="p-1 px-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs transition duration-200 disabled:opacity-50 disabled:pointer-events-none">
-                        Вперед <i class="fa-solid fa-chevron-right ml-1"></i>
+                    <button id="btnNextPage" class="p-1 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 rounded text-[10px] transition disabled:opacity-40 disabled:pointer-events-none">
+                        <i class="fa-solid fa-chevron-right"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Workspace Body -->
-            <div class="flex-1 p-6 flex flex-col overflow-y-auto min-h-0 relative">
+            <!-- Canvas View Area -->
+            <div class="flex-1 p-4 flex flex-col overflow-y-auto min-h-0 relative bg-zinc-50 dark:bg-zinc-950/20">
                 
-                <!-- 1. Drag & Drop Loader View (Shown initially) -->
-                <div id="uploadZone" class="flex-1 border-2 border-dashed border-slate-800 hover:border-brand-500/50 rounded-xl flex flex-col items-center justify-center p-8 bg-slate-950/20 hover:bg-brand-500/[0.01] transition-all duration-300 group cursor-pointer">
+                <!-- 1. Drag & Drop Loader -->
+                <div id="uploadZone" class="flex-1 border-2 border-dashed border-zinc-300 dark:border-zinc-800 hover:border-indigo-500 dark:hover:border-indigo-500/50 rounded-lg flex flex-col items-center justify-center p-6 bg-white dark:bg-zinc-900/10 hover:bg-indigo-50/10 dark:hover:bg-indigo-950/[0.01] transition duration-200 group cursor-pointer select-none">
                     <input type="file" id="fileInput" class="hidden" accept=".txt,.pdf">
-                    <div class="h-16 w-16 rounded-2xl bg-slate-900 border border-slate-800 group-hover:border-brand-500/30 flex items-center justify-center shadow-lg group-hover:shadow-brand-500/5 transition duration-300">
-                        <i class="fa-solid fa-cloud-arrow-up text-slate-500 group-hover:text-brand-500 text-2xl transition duration-300"></i>
-                    </div>
-                    <h3 class="mt-4 text-base font-semibold text-slate-200">Перетащите сюда файл</h3>
-                    <p class="mt-1.5 text-xs text-slate-400 text-center max-w-sm">Поддерживаются текстовые файлы (.txt) и документы PDF (.pdf) для анализа и маскирования</p>
-                    <button class="mt-6 px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-xs font-semibold rounded-lg transition">
-                        Выбрать файл
-                    </button>
+                    <i class="fa-solid fa-cloud-arrow-up text-zinc-400 dark:text-zinc-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 text-xl transition"></i>
+                    <h3 class="mt-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">Перетащите TXT или PDF файл</h3>
+                    <p class="mt-1 text-[10px] text-zinc-400 max-w-xs text-center">или кликните для выбора</p>
                 </div>
 
-                <!-- 2. Text Editor / Preview Container (Hidden initially) -->
-                <div id="textPreviewContainer" class="hidden flex-1 flex flex-col space-y-4">
-                    <div class="flex items-center justify-between text-xs text-slate-400">
-                        <span>Вы можете выделять текст вручную для добавления маскирования</span>
+                <!-- 2. Text Editor / Highlights container -->
+                <div id="textPreviewContainer" class="hidden flex-1 flex flex-col space-y-2">
+                    <div class="flex items-center justify-between text-[10px] text-zinc-500">
+                        <span>Выделите слово мышкой, чтобы добавить маску</span>
                         <span id="textCharCount">Символов: 0</span>
                     </div>
-                    <!-- The editable highlight container -->
-                    <div id="textEditor" class="flex-1 w-full bg-slate-950 border border-slate-800/80 rounded-xl p-5 text-sm leading-relaxed overflow-y-auto focus:outline-none focus:border-brand-500/50 min-h-[300px] whitespace-pre-wrap selection:bg-brand-500/30" contenteditable="true" spellcheck="false"></div>
+                    <div id="textEditor" class="flex-1 w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 text-xs leading-relaxed overflow-y-auto focus:outline-none focus:border-indigo-500 min-h-[300px] whitespace-pre-wrap select-text" contenteditable="true" spellcheck="false"></div>
                 </div>
 
-                <!-- 3. PDF Image Viewer (Hidden initially) -->
-                <div id="pdfPreviewContainer" class="hidden flex-1 flex items-center justify-center overflow-auto min-h-0 bg-slate-950/40 border border-slate-800/80 rounded-xl p-4 relative">
-                    <!-- Page wrapper with sizing constraints -->
-                    <div id="pdfPageWrapper" class="relative max-w-full shadow-2xl select-none mx-auto bg-white rounded border border-slate-800">
-                        <!-- Loaded page image -->
+                <!-- 3. PDF Image Viewer -->
+                <div id="pdfPreviewContainer" class="hidden flex-1 flex items-center justify-center overflow-auto min-h-0 bg-zinc-100/60 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2 relative">
+                    <div id="pdfPageWrapper" class="relative max-w-full shadow mx-auto bg-white rounded border border-zinc-200 dark:border-zinc-800">
                         <img id="pdfPageImage" class="block max-w-full h-auto" src="" alt="PDF Page">
-                        <!-- Interactive SVG overlay for drawing and selection boxes -->
                         <div id="pdfOverlay" class="absolute inset-0 z-10 overflow-hidden cursor-crosshair"></div>
                     </div>
                 </div>
                 
-                <!-- Loading Overlay -->
-                <div id="previewLoader" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm z-30 flex flex-col items-center justify-center space-y-4 hidden opacity-0 transition-opacity duration-300">
-                    <div class="h-10 w-10 border-4 border-slate-800 border-t-brand-500 rounded-full animate-spin"></div>
+                <!-- Flat Loading Overlay -->
+                <div id="previewLoader" class="absolute inset-0 bg-white/80 dark:bg-zinc-950/80 z-30 flex flex-col items-center justify-center space-y-3 hidden opacity-0 transition-opacity duration-200">
+                    <div class="h-6 w-6 border-2 border-zinc-300 dark:border-zinc-800 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin"></div>
                     <div class="text-center">
-                        <h4 id="loaderTitle" class="text-sm font-semibold text-slate-200">Обработка файла...</h4>
-                        <p id="loaderSubtitle" class="text-xs text-slate-400 mt-1">Обычно это занимает несколько секунд</p>
+                        <h4 id="loaderTitle" class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Обработка...</h4>
+                        <p id="loaderSubtitle" class="text-[10px] text-zinc-500 mt-0.5"></p>
                     </div>
                 </div>
 
             </div>
         </section>
 
-        <!-- Right Side: Control & Entities List Panel -->
-        <section class="w-full lg:w-[420px] flex flex-col bg-slate-900/50 border border-slate-800/80 rounded-2xl overflow-hidden backdrop-blur-sm">
-            <!-- Header bar for controls -->
-            <div class="h-14 border-b border-slate-800/80 px-6 flex items-center bg-slate-900/40">
-                <i class="fa-solid fa-list-check text-slate-400 mr-2 text-sm"></i>
-                <span class="text-sm font-semibold text-slate-200">Управление и Анализ</span>
+        <!-- Right Side: Control & Entities Panel -->
+        <section class="w-full md:w-[350px] flex flex-col bg-white dark:bg-zinc-900 border-t md:border-t-0 border-zinc-200 dark:border-zinc-800 overflow-hidden select-none">
+            <div class="h-10 border-b border-zinc-200 dark:border-zinc-800 px-4 flex items-center bg-zinc-50/50 dark:bg-zinc-900/40">
+                <i class="fa-solid fa-list-check text-zinc-400 mr-2 text-xs"></i>
+                <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Панель управления</span>
             </div>
 
-            <!-- Panel Body -->
-            <div class="flex-1 p-6 flex flex-col overflow-y-auto space-y-6">
+            <!-- Panel Actions and Entities List -->
+            <div class="flex-1 p-4 flex flex-col overflow-y-auto space-y-4">
                 
-                <!-- File info block (hidden when empty) -->
-                <div id="fileInfoBlock" class="hidden bg-slate-950/50 border border-slate-800/80 rounded-xl p-4 flex items-center space-x-3">
-                    <div class="h-10 w-10 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
-                        <i id="fileIcon" class="fa-solid fa-file-lines text-brand-400 text-lg"></i>
+                <!-- File info -->
+                <div id="fileInfoBlock" class="hidden bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-850 rounded-lg p-3 flex items-center space-x-2.5">
+                    <div class="h-8 w-8 rounded bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                        <i id="fileIcon" class="fa-solid fa-file-lines text-indigo-600 dark:text-indigo-400 text-sm"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 id="fileName" class="text-xs font-semibold text-slate-200 truncate">document.txt</h4>
-                        <p id="fileSize" class="text-[10px] text-slate-400 mt-0.5">25 KB</p>
+                        <h4 id="fileName" class="text-[11px] font-semibold text-zinc-700 dark:text-zinc-200 truncate"></h4>
+                        <p id="fileSize" class="text-[9px] text-zinc-500 mt-0.5"></p>
                     </div>
-                    <button id="btnClearFile" class="text-slate-400 hover:text-red-400 p-1.5 rounded-lg hover:bg-slate-850 transition" title="Очистить и закрыть">
-                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    <button id="btnClearFile" class="text-zinc-400 hover:text-red-500 p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-800 transition" title="Закрыть файл">
+                        <i class="fa-solid fa-trash-can text-[10px]"></i>
                     </button>
                 </div>
 
-                <!-- Primary Action Control Buttons -->
-                <div class="space-y-3">
-                    <button id="btnFindPII" class="w-full py-3 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 disabled:opacity-50 disabled:pointer-events-none text-white text-xs font-bold uppercase tracking-wider rounded-xl transition duration-200 shadow-lg shadow-brand-500/15 flex items-center justify-center space-x-2" disabled>
+                <!-- Primary Action Buttons -->
+                <div class="space-y-2">
+                    <button id="btnFindPII" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold rounded transition disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center space-x-1.5" disabled>
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <span>Найти личные данные</span>
+                        <span>Найти PII</span>
                     </button>
                     
-                    <button id="btnDownload" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 disabled:opacity-50 disabled:pointer-events-none text-white text-xs font-bold uppercase tracking-wider rounded-xl transition duration-200 shadow-lg shadow-emerald-500/10 flex items-center justify-center space-x-2" disabled>
+                    <button id="btnDownload" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded transition disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center space-x-1.5" disabled>
                         <i class="fa-solid fa-download"></i>
                         <span>Скачать очищенный файл</span>
                     </button>
                 </div>
 
-                <!-- Entities categories lists -->
-                <div class="flex-1 flex flex-col min-h-[200px]">
-                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-3">
-                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Найденные сущности</h4>
-                        <span id="badgeEntityCount" class="text-[10px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full">0</span>
+                <!-- List of Detections -->
+                <div class="flex-1 flex flex-col min-h-[150px]">
+                    <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-1.5 mb-2">
+                        <h4 class="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Найденные сущности</h4>
+                        <span id="badgeEntityCount" class="text-[9px] font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 px-1.5 py-0.5 rounded-full">0</span>
                     </div>
 
-                    <!-- Scroller wrapper for the list -->
-                    <div id="entitiesList" class="flex-1 overflow-y-auto space-y-2 max-h-[400px] pr-1">
-                        <!-- Placeholder -->
-                        <div id="noEntitiesPlaceholder" class="h-full flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-800 rounded-xl bg-slate-950/10">
-                            <i class="fa-solid fa-circle-info text-slate-500 text-lg mb-2"></i>
-                            <p class="text-xs text-slate-400">Загрузите файл и нажмите кнопку "Найти личные данные"</p>
+                    <!-- List Container -->
+                    <div id="entitiesList" class="flex-1 overflow-y-auto space-y-1.5 max-h-[350px] pr-0.5">
+                        <div id="noEntitiesPlaceholder" class="h-full flex flex-col items-center justify-center text-center p-4 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg bg-zinc-50/50 dark:bg-zinc-950/10">
+                            <i class="fa-solid fa-circle-info text-zinc-400 text-sm mb-1"></i>
+                            <p class="text-[10px] text-zinc-400">Загрузите файл для начала поиска</p>
                         </div>
                     </div>
                 </div>
@@ -227,49 +205,47 @@
 
     </main>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 overflow-hidden mx-4 transform scale-95 transition-transform duration-300">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-                <div class="flex items-center space-x-2.5">
-                    <i class="fa-solid fa-sliders text-brand-400"></i>
-                    <h3 class="text-base font-bold text-slate-100">Настройки системных путей</h3>
+    <!-- Flat Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200 select-none">
+        <div class="w-full max-w-md bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow p-5 overflow-hidden mx-4 transform scale-95 transition-transform duration-200">
+            <!-- Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-sliders text-indigo-600 dark:text-indigo-400"></i>
+                    <h3 class="text-xs font-bold text-zinc-850 dark:text-zinc-100">Настройки утилит</h3>
                 </div>
-                <button id="btnSettingsClose" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
-                    <i class="fa-solid fa-xmark text-sm"></i>
+                <button id="btnSettingsClose" class="text-zinc-400 hover:text-zinc-800 dark:hover:text-white p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
+                    <i class="fa-solid fa-xmark text-xs"></i>
                 </button>
             </div>
 
-            <!-- Modal Content -->
-            <form id="settingsForm" class="py-5 space-y-4 text-xs">
+            <!-- Content Form -->
+            <form id="settingsForm" class="py-4 space-y-3 text-[10px]">
                 <div>
-                    <label for="inputTesseract" class="block font-semibold text-slate-300 mb-1.5">Путь к исполняемому файлу Tesseract OCR (tesseract.exe)</label>
-                    <input type="text" id="inputTesseract" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-brand-500 transition" placeholder="C:\Program Files\Tesseract-OCR\tesseract.exe">
-                    <p class="mt-1 text-[10px] text-slate-400">Необходим для распознавания текста в PDF (OCR)</p>
+                    <label for="inputTesseract" class="block font-semibold text-zinc-600 dark:text-zinc-350 mb-1">Путь к файлу Tesseract OCR (tesseract.exe)</label>
+                    <input type="text" id="inputTesseract" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded p-2 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-500 transition" placeholder="Нажмите «Сохранить» для автоопределения">
                 </div>
 
                 <div>
-                    <label for="inputPoppler" class="block font-semibold text-slate-300 mb-1.5">Путь к папке bin у Poppler</label>
-                    <input type="text" id="inputPoppler" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-brand-500 transition" placeholder="C:\Program Files\poppler\bin">
-                    <p class="mt-1 text-[10px] text-slate-400">Необходим для преобразования страниц PDF в изображения</p>
+                    <label for="inputPoppler" class="block font-semibold text-zinc-600 dark:text-zinc-350 mb-1">Путь к папке bin у Poppler</label>
+                    <input type="text" id="inputPoppler" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded p-2 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-500 transition" placeholder="Пример: C:\poppler\bin">
                 </div>
 
-                <!-- Alert banner inside settings -->
-                <div class="p-3 bg-brand-500/10 border border-brand-500/20 rounded-lg text-brand-300 flex items-start space-x-2">
-                    <i class="fa-solid fa-circle-exclamation mt-0.5 text-sm flex-shrink-0"></i>
-                    <p class="text-[10px] leading-relaxed">
-                        Если утилиты добавлены в системную переменную среды <strong>PATH</strong>, поля можно оставить пустыми — приложение найдет их автоматически.
+                <!-- Info Alert -->
+                <div class="p-2.5 bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-950/40 rounded text-indigo-700 dark:text-indigo-400 flex items-start space-x-1.5 leading-relaxed">
+                    <i class="fa-solid fa-circle-exclamation mt-0.5 text-xs flex-shrink-0"></i>
+                    <p class="text-[9px]">
+                        В переносной (portable) версии папки <strong>tesseract</strong> и <strong>poppler</strong> можно просто скопировать в каталог программы — пути настроятся сами.
                     </p>
                 </div>
             </form>
 
-            <!-- Modal Footer -->
-            <div class="flex items-center justify-end space-x-3 pt-4 border-b-0 border-t border-slate-800">
-                <button id="btnSettingsCancel" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-lg transition duration-200">
+            <!-- Footer -->
+            <div class="flex items-center justify-end space-x-2 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                <button id="btnSettingsCancel" class="px-3.5 py-1.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold rounded text-[10px] transition">
                     Отмена
                 </button>
-                <button id="btnSettingsSave" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-lg transition duration-200 flex items-center space-x-1.5">
+                <button id="btnSettingsSave" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded text-[10px] transition flex items-center space-x-1">
                     <i class="fa-solid fa-floppy-disk"></i>
                     <span>Сохранить</span>
                 </button>
@@ -277,19 +253,16 @@
         </div>
     </div>
 
-    <!-- Clickable highlight options popup template -->
-    <div id="highlightPopover" class="fixed z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-3 flex flex-col hidden space-y-1.5 w-48 text-[11px] font-medium">
-        <div class="px-2 py-1 border-b border-slate-800 text-[10px] text-slate-400 truncate" id="popoverEntityText">Сущность</div>
-        <button id="popoverBtnToggle" class="w-full text-left px-2 py-1.5 rounded hover:bg-slate-800 flex items-center justify-between text-slate-200">
-            <span>Исключить из удаления</span>
-            <i class="fa-solid fa-check text-emerald-400 text-[9px]" id="popoverIconCheck"></i>
+    <!-- Highlight Option Popover -->
+    <div id="highlightPopover" class="fixed z-50 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-850 rounded shadow-lg p-2.5 flex flex-col hidden space-y-1 w-44 text-[10px] font-medium">
+        <div class="px-1.5 py-0.5 border-b border-zinc-100 dark:border-zinc-800 text-[9px] text-zinc-400 truncate" id="popoverEntityText"></div>
+        <button id="popoverBtnToggle" class="w-full text-left px-1.5 py-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-850 flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+            <span>Исключить</span>
+            <i class="fa-solid fa-check text-emerald-500 text-[8px]" id="popoverIconCheck"></i>
         </button>
-        <button id="popoverBtnDelete" class="w-full text-left px-2 py-1.5 rounded hover:bg-red-950/30 hover:text-red-400 flex items-center justify-between text-slate-400">
-            <span>Удалить выделение</span>
-            <i class="fa-solid fa-trash-can text-[9px]"></i>
-        </button>
-        <button id="popoverBtnType" class="w-full text-left px-2 py-1.5 rounded hover:bg-slate-800 flex items-center justify-between text-slate-200">
-            <span>Тип: <span id="popoverTypeBadge" class="font-bold text-brand-400">PERSON</span></span>
+        <button id="popoverBtnDelete" class="w-full text-left px-1.5 py-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-500 flex items-center justify-between text-zinc-500 dark:text-zinc-400">
+            <span>Удалить маску</span>
+            <i class="fa-solid fa-trash-can text-[8px]"></i>
         </button>
     </div>
 

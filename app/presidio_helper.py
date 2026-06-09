@@ -1,5 +1,6 @@
 import os
 import io
+import sys
 import shutil
 import logging
 from typing import List, Dict, Any, Tuple
@@ -29,8 +30,20 @@ load_dotenv()
 tesseract_cmd_path = os.getenv("TESSERACT_CMD", "")
 poppler_path_env = os.getenv("POPPLER_PATH", "")
 
+# Determine executable base directory (frozen check for PyInstaller)
+if getattr(sys, 'frozen', False):
+    EXE_DIR = os.path.dirname(sys.executable)
+else:
+    EXE_DIR = os.path.abspath(".")
+
 def find_tesseract() -> str:
     """Auto-detect Tesseract executable on Windows or return default if in PATH."""
+    # 1. Check local bundled folder first
+    local_path = os.path.join(EXE_DIR, "tesseract", "tesseract.exe")
+    if os.path.exists(local_path):
+        logger.info(f"Auto-detected bundled Tesseract at: {local_path}")
+        return local_path
+
     if tesseract_cmd_path:
         return tesseract_cmd_path
     if shutil.which("tesseract"):
@@ -50,6 +63,17 @@ def find_tesseract() -> str:
 
 def find_poppler() -> str:
     """Auto-detect Poppler bin directory on Windows."""
+    # 1. Check local bundled folders next to exe first
+    local_lib_bin = os.path.join(EXE_DIR, "poppler", "Library", "bin")
+    if os.path.exists(local_lib_bin) and os.path.exists(os.path.join(local_lib_bin, "pdftoppm.exe")):
+        logger.info(f"Auto-detected bundled Poppler at: {local_lib_bin}")
+        return local_lib_bin
+        
+    local_bin = os.path.join(EXE_DIR, "poppler", "bin")
+    if os.path.exists(local_bin) and os.path.exists(os.path.join(local_bin, "pdftoppm.exe")):
+        logger.info(f"Auto-detected bundled Poppler at: {local_bin}")
+        return local_bin
+
     if poppler_path_env:
         return poppler_path_env
     if shutil.which("pdftoppm"):

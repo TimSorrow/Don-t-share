@@ -61,12 +61,12 @@ const inputPoppler = document.getElementById("inputPoppler");
 const highlightPopover = document.getElementById("highlightPopover");
 const popoverEntityText = document.getElementById("popoverEntityText");
 const popoverBtnToggle = document.getElementById("popoverBtnToggle");
-const popoverBtnType = document.getElementById("popoverBtnType");
 const popoverIconCheck = document.getElementById("popoverIconCheck");
 let currentPopoverEntityIndex = null;
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
+    initThemeToggle();
     checkSystemStatus();
     initUploadEvents();
     initSettingsEvents();
@@ -82,6 +82,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+function initThemeToggle() {
+    const btnThemeToggle = document.getElementById("btnThemeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    if (savedTheme === "dark") {
+        document.documentElement.classList.add("dark");
+        themeIcon.className = "fa-solid fa-sun text-[11px]";
+    } else {
+        document.documentElement.classList.remove("dark");
+        themeIcon.className = "fa-solid fa-moon text-[11px]";
+    }
+    
+    btnThemeToggle.addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark");
+        if (document.documentElement.classList.contains("dark")) {
+            localStorage.setItem("theme", "dark");
+            themeIcon.className = "fa-solid fa-sun text-[11px]";
+        } else {
+            localStorage.setItem("theme", "light");
+            themeIcon.className = "fa-solid fa-moon text-[11px]";
+        }
+    });
+}
 
 // Helper: Escape HTML
 function escapeHtml(text) {
@@ -425,15 +451,14 @@ function showPopover(el, index) {
     const ent = state.textEntities[index];
     
     popoverEntityText.innerText = `"${ent.text}"`;
-    popoverTypeBadge.innerText = ent.entity_type;
     
     // Icon state
     if (ent.ignored) {
-        popoverIconCheck.className = "fa-solid fa-xmark text-rose-400 text-[10px]";
-        popoverBtnToggle.querySelector("span").innerText = "Включить в удаление";
+        popoverIconCheck.className = "fa-solid fa-xmark text-rose-500 text-[9px]";
+        popoverBtnToggle.querySelector("span").innerText = "Включить";
     } else {
-        popoverIconCheck.className = "fa-solid fa-check text-emerald-400 text-[9px]";
-        popoverBtnToggle.querySelector("span").innerText = "Исключить из удаления";
+        popoverIconCheck.className = "fa-solid fa-check text-emerald-500 text-[8px]";
+        popoverBtnToggle.querySelector("span").innerText = "Исключить";
     }
     
     // Position

@@ -1,11 +1,16 @@
 import json
 import logging
+import sys
+import os
 from typing import List, Dict, Any
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import io
+
+# Determine base directory (frozen check for PyInstaller)
+BASE_DIR = sys._MEIPASS if getattr(sys, 'frozen', False) else os.path.abspath(".")
 
 from app.presidio_helper import (
     get_binary_status,
@@ -22,13 +27,14 @@ logger = logging.getLogger("PresidioApp")
 
 app = FastAPI(title="Don't Share PII Cleaner API")
 
-# Mount static files directory if it exists
+# Mount static files directory
 import os
-os.makedirs("static/css", exist_ok=True)
-os.makedirs("static/js", exist_ok=True)
-os.makedirs("app/templates", exist_ok=True)
+if not getattr(sys, 'frozen', False):
+    os.makedirs(os.path.join(BASE_DIR, "static", "css"), exist_ok=True)
+    os.makedirs(os.path.join(BASE_DIR, "static", "js"), exist_ok=True)
+    os.makedirs(os.path.join(BASE_DIR, "app", "templates"), exist_ok=True)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
 # Schemas
 class AnalyzeTextRequest(BaseModel):
@@ -47,7 +53,7 @@ class SettingsRequest(BaseModel):
 @app.get("/")
 def read_root():
     """Serves the main single-page application frontend."""
-    index_path = "app/templates/index.html"
+    index_path = os.path.join(BASE_DIR, "app", "templates", "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
     return HTMLResponse(content="<h3>Index file not found. Please verify folder structure.</h3>", status_code=404)
