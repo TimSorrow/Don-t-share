@@ -55,7 +55,14 @@ def read_root():
     """Serves the main single-page application frontend."""
     index_path = os.path.join(BASE_DIR, "app", "templates", "index.html")
     if os.path.exists(index_path):
-        return FileResponse(index_path)
+        return FileResponse(
+            index_path,
+            headers={
+                "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
     return HTMLResponse(content="<h3>Index file not found. Please verify folder structure.</h3>", status_code=404)
 
 @app.get("/api/status")
