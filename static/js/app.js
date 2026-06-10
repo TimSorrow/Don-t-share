@@ -91,20 +91,20 @@ function initThemeToggle() {
     const savedTheme = localStorage.getItem("theme") || "dark";
     if (savedTheme === "dark") {
         document.documentElement.classList.add("dark");
-        themeIcon.className = "fa-solid fa-sun text-[11px]";
+        themeIcon.className = "fa-solid fa-sun text-xs";
     } else {
         document.documentElement.classList.remove("dark");
-        themeIcon.className = "fa-solid fa-moon text-[11px]";
+        themeIcon.className = "fa-solid fa-moon text-xs";
     }
     
     btnThemeToggle.addEventListener("click", () => {
         document.documentElement.classList.toggle("dark");
         if (document.documentElement.classList.contains("dark")) {
             localStorage.setItem("theme", "dark");
-            themeIcon.className = "fa-solid fa-sun text-[11px]";
+            themeIcon.className = "fa-solid fa-sun text-xs";
         } else {
             localStorage.setItem("theme", "light");
-            themeIcon.className = "fa-solid fa-moon text-[11px]";
+            themeIcon.className = "fa-solid fa-moon text-xs";
         }
     });
 }
@@ -454,10 +454,10 @@ function showPopover(el, index) {
     
     // Icon state
     if (ent.ignored) {
-        popoverIconCheck.className = "fa-solid fa-xmark text-rose-500 text-[9px]";
+        popoverIconCheck.className = "fa-solid fa-xmark text-rose-500 text-xs";
         popoverBtnToggle.querySelector("span").innerText = "Включить";
     } else {
-        popoverIconCheck.className = "fa-solid fa-check text-emerald-500 text-[8px]";
+        popoverIconCheck.className = "fa-solid fa-check text-emerald-500 text-[10px]";
         popoverBtnToggle.querySelector("span").innerText = "Исключить";
     }
     
@@ -984,7 +984,7 @@ function renderEntitiesList() {
         
         item.innerHTML = `
             <div class="flex items-center space-x-2.5 min-w-0">
-                <span class="h-6 px-2.5 border rounded-lg flex items-center justify-center space-x-1 ${colorClass} text-[10px] font-semibold tracking-wide uppercase">
+                <span class="h-6 px-2.5 border rounded-lg flex items-center justify-center space-x-1 ${colorClass} text-xs font-semibold tracking-wide uppercase">
                     <i class="${icon}"></i>
                     <span>${labelName}</span>
                 </span>
@@ -992,7 +992,7 @@ function renderEntitiesList() {
             </div>
             
             <div class="flex items-center space-x-2">
-                <span class="text-[10px] text-slate-500 font-semibold">${(ent.score * 100).toFixed(0)}%</span>
+                <span class="text-xs text-slate-500 font-semibold">${(ent.score * 100).toFixed(0)}%</span>
                 <button class="btn-toggle-entity p-1 text-slate-400 hover:text-white rounded hover:bg-slate-800 transition" title="${ent.ignored ? 'Включить в маскирование' : 'Исключить из маскирования'}">
                     <i class="fa-solid ${ent.ignored ? 'fa-eye-slash text-slate-500' : 'fa-eye text-emerald-400'} text-xs"></i>
                 </button>
